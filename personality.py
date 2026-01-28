@@ -23,22 +23,6 @@ def get_personality(stats):
         "description": desc
     }
 import os
-from huggingface_hub import InferenceClient
-
-client = InferenceClient(
-    model="bigscience/bloomz-560m",
-    token=os.getenv("HF_TOKEN")
-)
-
-from huggingface_hub import InferenceClient
-import os
-
-client = InferenceClient(
-    model="mistralai/Mistral-7B-Instruct-v0.2",
-    token=os.getenv("HF_TOKEN")
-)
-
-def ai_description(stats):
     try:
         messages = [
             {"role": "system", "content": "Ты опытный тимлид и оцениваешь стиль разработчиков."},
@@ -52,3 +36,41 @@ def ai_description(stats):
         return response.choices[0].message.content.strip()
     except Exception as e:
         return "AI временно недоступен, но разработчик всё равно хорош 😎"
+
+from huggingface_hub import InferenceClient
+import os
+
+client = InferenceClient(
+    model="HuggingFaceH4/zephyr-7b-beta",
+    token=os.getenv("HF_TOKEN")
+)
+
+def ai_description(stats):
+    try:
+        messages = [
+            {
+                "role": "system",
+                "content": "Ты опытный разработчик и кратко описываешь стиль других разработчиков."
+            },
+            {
+                "role": "user",
+                "content": f"""
+GitHub разработчик.
+Основной язык: {stats['main_language']}
+Активность: {stats['activity_score']}
+
+Опиши стиль коротко и с лёгким юмором.
+"""
+            }
+        ]
+
+        response = client.chat_completion(
+            messages=messages,
+            max_tokens=100,
+            temperature=0.8
+        )
+
+        return response.choices[0].message.content.strip()
+
+    except Exception as e:
+        return f"AI временно недоступен (HF): {str(e)[:80]}..."
