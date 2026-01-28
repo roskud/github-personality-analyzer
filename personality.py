@@ -22,20 +22,9 @@ def get_personality(stats):
         "type": dev_type,
         "description": desc
     }
-import os
-    try:
-        messages = [
-            {"role": "system", "content": "Ты опытный тимлид и оцениваешь стиль разработчиков."},
-            {"role": "user", "content": f"GitHub разработчик. Основной язык: {stats['main_language']}. Активность: {stats['activity_score']}. Опиши стиль коротко и с юмором."}
-        ]
-        response = client.chat_completion(
-            messages=messages,
-            max_tokens=80,
-            temperature=0.8
-        )
-        return response.choices[0].message.content.strip()
-    except Exception as e:
-        return "AI временно недоступен, но разработчик всё равно хорош 😎"
+
+
+# ---------- AI ЧАСТЬ ----------
 
 from huggingface_hub import InferenceClient
 import os
@@ -54,13 +43,12 @@ def ai_description(stats):
             },
             {
                 "role": "user",
-                "content": f"""
-GitHub разработчик.
-Основной язык: {stats['main_language']}
-Активность: {stats['activity_score']}
-
-Опиши стиль коротко и с лёгким юмором.
-"""
+                "content": (
+                    f"GitHub разработчик.\n"
+                    f"Основной язык: {stats['main_language']}\n"
+                    f"Активность: {stats['activity_score']}\n\n"
+                    f"Опиши стиль коротко и с лёгким юмором."
+                )
             }
         ]
 
