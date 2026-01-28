@@ -1,6 +1,4 @@
-requests
-matplotlib
-rich
 flask
-huggingface_hub
+requests
+rich
 groq
