@@ -3,21 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <title>GitHub Personality Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            padding-top: 60px;
+        }
+        .card {
+            background: #020617;
+            padding: 30px;
+            width: 420px;
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(0,0,0,.5);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 6px;
+            border: none;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 20px;
+            background: #020617;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .ai {
+            margin-top: 10px;
+            color: #93c5fd;
+        }
+        .error {
+            color: #f87171;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <h1>GitHub Personality Analyzer</h1>
+<div class="card">
+    <h1>GitHub Analyzer</h1>
 
     <form method="post">
         <input name="username" placeholder="GitHub-ник" required>
+        <label>
+            <input type="checkbox" name="use_ai" checked>
+            Использовать AI
+        </label>
         <button type="submit">Анализировать</button>
     </form>
 
-    {% if result %}
-        <hr>
-        <p><b>Пользователь:</b> {{ result.username }}</p>
-        <p><b>Тип:</b> {{ result.type }}</p>
-        <p><b>Активность:</b> {{ result.score }}</p>
-        <p><b>Описание:</b> {{ result.description }}</p>
+    {% if error %}
+        <p class="error">{{ error }}</p>
     {% endif %}
+
+    {% if result %}
+        <div class="result">
+            <p><b>Пользователь:</b> {{ result.username }}</p>
+            <p><b>Тип:</b> {{ result.type }}</p>
+            <p><b>Активность:</b> {{ result.score }}</p>
+            <p><b>Описание:</b> {{ result.description }}</p>
+
+            {% if result.ai %}
+                <p class="ai"><b>AI:</b> {{ result.ai }}</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
 </body>
 </html>
