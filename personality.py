@@ -1,3 +1,13 @@
+import json
+import os
+from datetime import datetime
+from groq import Groq
+
+CACHE_FILE = "cache/ai_cache.json"
+
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+
 def get_personality(stats):
     lang = stats["main_language"]
     score = stats["activity_score"]
@@ -24,14 +34,29 @@ def get_personality(stats):
     }
 
 
-# ---------- AI ЧАСТЬ (GROQ) ----------
+# ---------- AI + CACHE ----------
 
-from groq import Groq
-import os
+def load_cache():
+    if not os.path.exists(CACHE_FILE):
+        return {}
+    with open(CACHE_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
 
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-def ai_description(stats):
+def save_cache(cache):
+    with open(CACHE_FILE, "w", encoding="utf-8") as f:
+        json.dump(cache, f, ensure_ascii=False, indent=2)
+
+
+def ai_description(stats, username):
+    cache = load_cache()
+    key = username.lower()
+
+    # ✅ 1. Возвращаем из кэша
+    if key in cache:
+        return cache[key]["ai"]
+
+    # ✅ 2. Иначе вызываем AI
     try:
         completion = client.chat.completions.create(
             model="llama-3.1-8b-instant",
@@ -54,7 +79,16 @@ def ai_description(stats):
             max_tokens=120
         )
 
-        return completion.choices[0].message.content.strip()
+        ai_text = completion.choices[0].message.content.strip()
+
+        # 💾 сохраняем в кэш
+        cache[key] = {
+            "ai": ai_text,
+            "ts": datetime.utcnow().isoformat()
+        }
+        save_cache(cache)
+
+        return ai_text
 
     except Exception as e:
         return f"AI временно недоступен (Groq): {str(e)[:100]}"

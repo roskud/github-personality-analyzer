@@ -23,7 +23,7 @@ def index():
 
             ai_text = None
             if use_ai:
-                ai_text = ai_description(stats)
+                ai_text = ai_description(stats, username)
                 ai_status = "ok" if "недоступен" not in ai_text else "fail"
 
             result = {
@@ -42,4 +42,4 @@ def index():
     )
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001, debug=True)
+    app.run(host="0.0.0.0", port=5002, debug=True)
