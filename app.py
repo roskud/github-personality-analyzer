@@ -8,6 +8,7 @@ app = Flask(__name__)
 def index():
     result = None
     error = None
+    ai_status = None
 
     if request.method == "POST":
         username = request.form.get("username")
@@ -20,15 +21,25 @@ def index():
             stats = analyze_stats(repos)
             personality = get_personality(stats)
 
+            ai_text = None
+            if use_ai:
+                ai_text = ai_description(stats)
+                ai_status = "ok" if "недоступен" not in ai_text else "fail"
+
             result = {
                 "username": username,
                 "type": personality["type"],
                 "score": stats["activity_score"],
                 "description": personality["description"],
-                "ai": ai_description(stats) if use_ai else None
+                "ai": ai_text
             }
 
-    return render_template("index.html", result=result, error=error)
+    return render_template(
+        "index.html",
+        result=result,
+        error=error,
+        ai_status=ai_status
+    )
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001, debug=True)

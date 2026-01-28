@@ -3,64 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <title>GitHub Personality Analyzer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #0f172a;
+            background: radial-gradient(circle at top, #020617, #000);
+            font-family: 'Inter', system-ui, sans-serif;
             color: #e5e7eb;
             display: flex;
             justify-content: center;
-            padding-top: 60px;
+            padding: 60px 20px;
         }
+
         .card {
-            background: #020617;
-            padding: 30px;
             width: 420px;
-            border-radius: 12px;
-            box-shadow: 0 0 30px rgba(0,0,0,.5);
+            background: rgba(2,6,23,0.9);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.6);
+            animation: fadeIn .6s ease;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         h1 {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            font-size: 1.6rem;
         }
+
         input, button {
             width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 6px;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 10px;
             border: none;
+            font-size: 1rem;
         }
+
+        input {
+            background: #020617;
+            color: white;
+            border: 1px solid #1e293b;
+        }
+
         button {
-            background: #2563eb;
+            background: linear-gradient(135deg, #2563eb, #60a5fa);
             color: white;
             cursor: pointer;
-        }
-        .result {
             margin-top: 20px;
-            background: #020617;
-            padding: 15px;
-            border-radius: 8px;
+            font-weight: 600;
         }
+
+        .toggle {
+            display: flex;
+            align-items: center;
+            margin-top: 14px;
+            gap: 8px;
+            font-size: .9rem;
+        }
+
+        .result {
+            margin-top: 24px;
+            padding: 20px;
+            background: #020617;
+            border-radius: 12px;
+            border: 1px solid #1e293b;
+        }
+
         .ai {
-            margin-top: 10px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px dashed #334155;
             color: #93c5fd;
         }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: .75rem;
+            margin-left: 6px;
+        }
+
+        .ok { background: #16a34a; }
+        .fail { background: #dc2626; }
+
         .error {
             color: #f87171;
             text-align: center;
+            margin-top: 16px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 18px;
+            font-size: .75rem;
+            color: #64748b;
         }
     </style>
 </head>
+
 <body>
 <div class="card">
-    <h1>GitHub Analyzer</h1>
+    <h1>GitHub Personality Analyzer</h1>
 
     <form method="post">
         <input name="username" placeholder="GitHub-ник" required>
-        <label>
+
+        <div class="toggle">
             <input type="checkbox" name="use_ai" checked>
-            Использовать AI
-        </label>
+            Использовать AI-анализ
+        </div>
+
         <button type="submit">Анализировать</button>
     </form>
 
@@ -70,16 +128,28 @@
 
     {% if result %}
         <div class="result">
-            <p><b>Пользователь:</b> {{ result.username }}</p>
-            <p><b>Тип:</b> {{ result.type }}</p>
-            <p><b>Активность:</b> {{ result.score }}</p>
-            <p><b>Описание:</b> {{ result.description }}</p>
+            <p><b>👤 Пользователь:</b> {{ result.username }}</p>
+            <p><b>🧠 Тип:</b> {{ result.type }}</p>
+            <p><b>🔥 Активность:</b> {{ result.score }}</p>
+            <p><b>💬 Описание:</b> {{ result.description }}</p>
 
             {% if result.ai %}
-                <p class="ai"><b>AI:</b> {{ result.ai }}</p>
+                <div class="ai">
+                    <b>🤖 AI-анализ</b>
+                    {% if ai_status == "ok" %}
+                        <span class="badge ok">ON</span>
+                    {% else %}
+                        <span class="badge fail">ERROR</span>
+                    {% endif %}
+                    <p>{{ result.ai }}</p>
+                </div>
             {% endif %}
         </div>
     {% endif %}
+
+    <footer>
+        Powered by GitHub API · AI optional
+    </footer>
 </div>
 </body>
 </html>
