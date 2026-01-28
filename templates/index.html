@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>GitHub Personality Analyzer</title>
+</head>
+<body>
+    <h1>GitHub Personality Analyzer</h1>
+
+    <form method="post">
+        <input name="username" placeholder="GitHub-ник" required>
+        <button type="submit">Анализировать</button>
+    </form>
+
+    {% if result %}
+        <hr>
+        <p><b>Пользователь:</b> {{ result.username }}</p>
+        <p><b>Тип:</b> {{ result.type }}</p>
+        <p><b>Активность:</b> {{ result.score }}</p>
+        <p><b>Описание:</b> {{ result.description }}</p>
+    {% endif %}
+</body>
+</html>
