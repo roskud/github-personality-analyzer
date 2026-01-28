@@ -2,3 +2,5 @@ requests
 matplotlib
 rich
 flask
+huggingface_hub
+groq

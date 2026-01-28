@@ -24,41 +24,37 @@ def get_personality(stats):
     }
 
 
-# ---------- AI ЧАСТЬ ----------
+# ---------- AI ЧАСТЬ (GROQ) ----------
 
-from huggingface_hub import InferenceClient
+from groq import Groq
 import os
 
-client = InferenceClient(
-    model="HuggingFaceH4/zephyr-7b-beta",
-    token=os.getenv("HF_TOKEN")
-)
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def ai_description(stats):
     try:
-        messages = [
-            {
-                "role": "system",
-                "content": "Ты опытный разработчик и кратко описываешь стиль других разработчиков."
-            },
-            {
-                "role": "user",
-                "content": (
-                    f"GitHub разработчик.\n"
-                    f"Основной язык: {stats['main_language']}\n"
-                    f"Активность: {stats['activity_score']}\n\n"
-                    f"Опиши стиль коротко и с лёгким юмором."
-                )
-            }
-        ]
-
-        response = client.chat_completion(
-            messages=messages,
-            max_tokens=100,
-            temperature=0.8
+        completion = client.chat.completions.create(
+            model="llama3-8b-8192",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "Ты опытный тимлид и кратко, уверенно и с юмором описываешь стиль разработчиков."
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        f"GitHub разработчик.\n"
+                        f"Основной язык: {stats['main_language']}\n"
+                        f"Активность: {stats['activity_score']}\n\n"
+                        f"Опиши стиль коротко и с лёгким юмором."
+                    )
+                }
+            ],
+            temperature=0.8,
+            max_tokens=120
         )
 
-        return response.choices[0].message.content.strip()
+        return completion.choices[0].message.content.strip()
 
     except Exception as e:
-        return f"AI временно недоступен (HF): {str(e)[:80]}..."
+        return f"AI временно недоступен (Groq): {str(e)[:100]}"
