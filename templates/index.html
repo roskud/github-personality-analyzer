@@ -56,6 +56,28 @@
             cursor: pointer;
             margin-top: 20px;
             font-weight: 600;
+            position: relative;
+        }
+
+        button.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         .toggle {
@@ -72,6 +94,7 @@
             background: #020617;
             border-radius: 12px;
             border: 1px solid #1e293b;
+            animation: fadeIn .4s ease;
         }
 
         .ai {
@@ -111,7 +134,7 @@
 <div class="card">
     <h1>GitHub Personality Analyzer</h1>
 
-    <form method="post">
+    <form method="post" onsubmit="startLoading()">
         <input name="username" placeholder="GitHub-ник" required>
 
         <div class="toggle">
@@ -119,7 +142,9 @@
             Использовать AI-анализ
         </div>
 
-        <button type="submit">Анализировать</button>
+        <button id="submitBtn" type="submit">
+            <span id="btnText">Анализировать</span>
+        </button>
     </form>
 
     {% if error %}
@@ -151,5 +176,16 @@
         Powered by GitHub API · AI optional
     </footer>
 </div>
+
+<script>
+function startLoading() {
+    const btn = document.getElementById("submitBtn");
+    const text = document.getElementById("btnText");
+
+    btn.classList.add("loading");
+    text.innerHTML = '<span class="spinner"></span>Анализируем...';
+}
+</script>
+
 </body>
 </html>
